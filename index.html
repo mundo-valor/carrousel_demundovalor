@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>El Carrusel del Valor | Mundo Valor</title>
-    <!-- PapaParse para leer el CSV fácilmente -->
+    <!-- PapaParse para leer el CSV -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
         :root {
@@ -21,65 +21,100 @@
             padding: 0;
             background-color: var(--bg-light);
             color: var(--text-dark);
+            scroll-behavior: smooth;
         }
 
-        /* Header e Intro */
+        /* Header e Intro optimizados */
         header {
             background-color: var(--primary-blue);
             color: var(--white);
-            padding: 20px 40px;
+            padding: 30px 40px;
             text-align: center;
             border-bottom: 5px solid var(--accent-orange);
         }
-        header img {
-            height: 80px; 
-            margin-bottom: 10px;
-            border-radius: 8px; /* Opcional: suaviza los bordes del logo */
+        .logo-container {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            margin-bottom: 15px;
         }
-        header h1 { margin: 0; font-size: 2.5rem; }
-        header p { margin: 5px 0 0; font-style: italic; opacity: 0.9; }
+        header img {
+            height: 110px; 
+            display: block;
+        }
+        header h1 { margin: 10px 0 0 0; font-size: 2.8rem; }
+        header p { margin: 5px 0 0; font-style: italic; opacity: 0.95; font-size: 1.1rem; }
 
         .intro-section {
+            background-color: var(--white);
+            padding: 30px 40px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .author-card {
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px 40px;
-            background-color: var(--white);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: left;
+            flex-wrap: wrap;
         }
         .intro-section img {
-            width: 100px;
-            height: 100px;
+            width: 150px;
+            height: 150px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid var(--accent-orange);
-            margin-right: 20px;
+            border: 4px solid var(--accent-orange);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
-        .intro-section p { max-width: 800px; line-height: 1.6; font-size: 0.95rem; }
+        .author-info {
+            flex: 1;
+            min-width: 280px;
+        }
+        .author-info strong { font-size: 1.2rem; color: var(--primary-blue); }
+        .author-info p { line-height: 1.6; font-size: 1rem; margin: 8px 0; }
+        
+        .instruction-banner {
+            margin-top: 20px;
+            background-color: #eef2f7;
+            border-left: 5px solid var(--accent-orange);
+            padding: 12px 20px;
+            border-radius: 4px;
+            font-weight: 600;
+            color: var(--primary-blue);
+            font-size: 0.95rem;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
 
         /* Contenedor Principal */
         .main-container {
             display: flex;
             flex-wrap: wrap;
-            padding: 20px 40px;
-            gap: 20px;
+            padding: 30px 40px;
+            gap: 30px;
             max-width: 1400px;
             margin: 0 auto;
         }
 
         /* Columna Izquierda: Reproductor */
         .player-column {
-            flex: 1 1 60%;
+            flex: 1 1 58%;
             background: var(--white);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
         }
         .video-wrapper {
             position: relative;
-            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            padding-bottom: 56.25%;
             height: 0;
             background: #000;
             border-radius: 8px;
@@ -95,7 +130,7 @@
         .player-controls {
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 12px;
             margin-top: 20px;
             flex-wrap: wrap;
         }
@@ -103,137 +138,164 @@
             background-color: var(--primary-blue);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 10px 18px;
+            border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
             transition: background 0.3s;
         }
         .btn-control:hover { background-color: var(--accent-orange); }
-        .active-video-info { margin-top: 15px; }
-        .active-video-info h2 { margin: 0 0 10px 0; color: var(--primary-blue); }
+        .active-video-info { margin-top: 20px; }
+        .active-video-info h2 { margin: 0 0 8px 0; color: var(--primary-blue); font-size: 1.3rem; }
 
         /* Columna Derecha: Buscador y Playlist */
         .search-column {
-            flex: 1 1 35%;
+            flex: 1 1 38%;
             background: var(--white);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
-            height: 80vh;
+            min-height: 600px;
         }
         .search-bar {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 15px;
+            padding: 14px;
+            border: 2px solid #d1d8e0;
+            border-radius: 6px;
+            margin-bottom: 20px;
             box-sizing: border-box;
             font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
         }
-        .alphabet-filter {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-bottom: 15px;
-        }
-        .letter-btn {
-            padding: 5px 10px;
-            background: #eee;
-            border: 1px solid #ccc;
-            cursor: pointer;
-            border-radius: 3px;
-        }
-        .letter-btn:hover, .letter-btn.active {
-            background: var(--accent-orange);
-            color: white;
-            border-color: var(--accent-orange);
-        }
+        .search-bar:focus { border-color: var(--primary-blue); }
         
         .tabs {
             display: flex;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #eee;
         }
         .tab {
             flex: 1;
             text-align: center;
-            padding: 10px;
+            padding: 12px;
             cursor: pointer;
-            background: #eee;
-            border-bottom: 3px solid transparent;
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #666;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
         }
         .tab.active {
-            background: var(--white);
-            font-weight: bold;
-            border-bottom: 3px solid var(--primary-blue);
+            background: var(--primary-blue);
+            color: var(--white);
         }
 
         .video-list-container {
-            overflow-y: auto;
             flex-grow: 1;
-            padding-right: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
         .video-item {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             padding: 10px;
-            border-bottom: 1px solid #eee;
+            background: #fafbfc;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s;
         }
-        .video-item:hover { background: #f9f9f9; }
+        .video-item:hover { background: #f0f4f8; border-color: var(--accent-orange); }
         .video-item img {
-            width: 120px;
-            height: 68px;
+            width: 110px;
+            height: 62px;
             object-fit: cover;
             border-radius: 4px;
         }
-        .video-item-details { flex: 1; }
+        .video-item-details { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
         .video-item-title {
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             font-weight: bold;
-            margin: 0 0 5px 0;
+            margin: 0;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            color: #222;
         }
+        .video-item-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 5px;
+        }
+        .video-date { font-size: 0.75rem; color: #666; }
         .add-to-playlist {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--accent-orange);
             background: none;
             border: 1px solid var(--accent-orange);
-            border-radius: 3px;
+            border-radius: 4px;
             cursor: pointer;
-            padding: 2px 5px;
+            padding: 3px 8px;
+            font-weight: 600;
         }
+        .add-to-playlist:hover { background: var(--accent-orange); color: white; }
+
+        /* Paginación */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        .page-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .page-btn:disabled { background-color: #ccc; cursor: not-allowed; }
+        .page-info { font-size: 0.9rem; font-weight: 600; color: #555; }
 
         @media (max-width: 900px) {
             .main-container { flex-direction: column; }
-            .search-column { height: 60vh; }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <img src="logo.png" alt="Logo Mundo Valor">
+        <div class="logo-container">
+            <img src="logo.png" alt="Logo Mundo Valor">
+        </div>
         <h1>Mundo Valor</h1>
         <p>El Carrusel del Valor | El canal de la valuación</p>
     </header>
 
     <section class="intro-section">
-        <!-- Imagen vinculada al archivo local foto_autor.png -->
-        <img src="foto_autor.png" alt="Prof. Ing. Miguel Camacaro Pérez">
-        <div>
-            <strong>Prof. Ing. Miguel Camacaro Pérez</strong>
-            <p>Ingeniero Civil por la Universidad de Los Andes (Venezuela), especialización en Valuación Inmobiliaria, Máster en Ciencias en Gerencia de la Construcción, Profesor universitario. Referencia internacional en la integración de Ciencia de la Valuación, Ciencia de Datos e Inteligencia Artificial Generativa.</p>
+        <div class="author-card">
+            <img src="foto_autor.jpg" alt="Prof. Ing. Miguel Camacaro Pérez">
+            <div class="author-info">
+                <strong>Prof. Ing. Miguel Camacaro Pérez</strong>
+                <p>Ingeniero Civil por la Universidad de Los Andes (Venezuela), especialización en Valuación Inmobiliaria, Máster en Ciencias en Gerencia de la Construcción, Profesor universitario. Referencia internacional en la integración de Ciencia de la Valuación, Ciencia de Datos e Inteligencia Artificial Generativa.</p>
+            </div>
+        </div>
+        <div class="instruction-banner">
+            👉 Seleccione un video de la lista interactiva ubicada abajo a la derecha para iniciar la reproducción automática en el visor.
         </div>
     </section>
 
-    <div class="main-container">
+    <div class="main-container" id="player-anchor">
         <!-- REPRODUCTOR Y CONTROLES -->
         <div class="player-column">
             <div class="video-wrapper">
@@ -249,34 +311,35 @@
 
             <div class="active-video-info">
                 <h2 id="active-title">Selecciona un video de la lista para comenzar</h2>
-                <p id="active-date"></p>
+                <p id="active-date" style="color: #666; font-size: 0.9rem;"></p>
             </div>
         </div>
 
-        <!-- BUSCADOR Y LISTA -->
+        <!-- BUSCADOR Y LISTA CON PAGINACIÓN -->
         <div class="search-column">
             <div class="tabs">
-                <div class="tab active" id="tab-catalogo" onclick="switchTab('catalogo')">Buscador del Valor</div>
+                <div class="tab active" id="tab-catalogo" onclick="switchTab('catalogo')">Catálogo de Videos</div>
                 <div class="tab" id="tab-playlist" onclick="switchTab('playlist')">Mi Lista (<span id="playlist-count">0</span>)</div>
             </div>
 
-            <div id="catalogo-view">
-                <input type="text" id="searchInput" class="search-bar" placeholder="Buscar por título o palabras clave..." onkeyup="filterVideos()">
-                
-                <div class="alphabet-filter" id="alphabet-container">
-                    <button class="letter-btn active" onclick="filterByLetter('ALL')">TODOS</button>
-                    <!-- Las letras se generan con JS -->
-                </div>
+            <div id="catalogo-view" style="display: flex; flex-direction: column; flex-grow: 1;">
+                <input type="text" id="searchInput" class="search-bar" placeholder="🔍 Buscar por título, palabra o número..." onkeyup="handleSearch()">
                 
                 <div class="video-list-container" id="video-list">
                     <!-- Los videos se cargan aquí -->
                 </div>
+
+                <div class="pagination" id="pagination-controls">
+                    <button class="page-btn" id="prevPageBtn" onclick="changePage(-1)">Anterior</button>
+                    <span class="page-info" id="pageInfo">Página 1 de 1</span>
+                    <button class="page-btn" id="nextPageBtn" onclick="changePage(1)">Siguiente</button>
+                </div>
             </div>
 
-            <div id="playlist-view" style="display: none;">
-                <button class="btn-control" style="width: 100%; margin-bottom: 10px; background-color: #dc3545;" onclick="clearPlaylist()">Vaciar Lista de Reproducción</button>
-                <div class="video-list-container" id="playlist-list">
-                    <!-- Lista de reproducción aquí -->
+            <div id="playlist-view" style="display: none; flex-direction: column; flex-grow: 1;">
+                <button class="btn-control" style="width: 100%; margin-bottom: 15px; background-color: #dc3545;" onclick="clearPlaylist()">Vaciar Lista de Reproducción</button>
+                <div class="video-list-container" id="playlist-list" style="overflow-y: auto; max-height: 450px;">
+                    <!-- Lista personalizada -->
                 </div>
             </div>
         </div>
@@ -286,12 +349,13 @@
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
         let allVideos = [];
+        let filteredVideos = [];
         let playlist = [];
-        let currentFilter = 'ALL';
+        let currentPage = 1;
+        const itemsPerPage = 10;
         let ytPlayer;
         let activeVideoId = null;
 
-        // 1. Cargar la API del Reproductor de YouTube
         function onYouTubeIframeAPIReady() {
             ytPlayer = new YT.Player('youtube-player', {
                 height: '100%',
@@ -305,90 +369,106 @@
         }
 
         function onPlayerStateChange(event) {
-            // Si el video termina (estado 0), pasa al siguiente si hay playlist
             if (event.data === YT.PlayerState.ENDED) {
                 playNext();
             }
         }
 
-        // 2. Generar el filtro alfabético
-        function generateAlphabet() {
-            const container = document.getElementById('alphabet-container');
-            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-            letters.forEach(letter => {
-                const btn = document.createElement('button');
-                btn.className = 'letter-btn';
-                btn.innerText = letter;
-                btn.onclick = () => filterByLetter(letter);
-                container.appendChild(btn);
-            });
+        // Limpiar tildes y normalizar texto para búsqueda robusta sin restricciones
+        function normalizeText(text) {
+            return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         }
 
-        // 3. Cargar y leer el archivo CSV generado en Python
         function loadCSVData() {
             Papa.parse("mundo_valor_videos.csv", {
                 download: true,
                 header: true,
                 complete: function(results) {
-                    allVideos = results.data.filter(v => v.video_id); // Ignorar filas vacías
-                    renderVideoList(allVideos);
+                    allVideos = results.data.filter(v => v.video_id);
+                    filteredVideos = allVideos;
+                    renderCurrentPage();
                 },
                 error: function(err) {
-                    document.getElementById('video-list').innerHTML = `<p style="color:red">Error cargando el archivo CSV. Asegúrate de estar corriendo un servidor local.</p>`;
+                    document.getElementById('video-list').innerHTML = `<p style="color:red; text-align:center;">Error cargando el archivo CSV local.</p>`;
                 }
             });
         }
 
-        // 4. Renderizar lista de videos
-        function renderVideoList(videos) {
+        function handleSearch() {
+            const rawTerm = document.getElementById('searchInput').value;
+            const searchTerm = normalizeText(rawTerm);
+            
+            filteredVideos = allVideos.filter(video => {
+                const titleNorm = normalizeText(video.title || "");
+                return titleNorm.includes(searchTerm);
+            });
+
+            currentPage = 1; // Reiniciar a la primera página al buscar
+            renderCurrentPage();
+        }
+
+        function renderCurrentPage() {
             const container = document.getElementById('video-list');
             container.innerHTML = '';
-            
-            videos.forEach(video => {
+
+            const totalPages = Math.ceil(filteredVideos.length / itemsPerPage) || 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageItems = filteredVideos.slice(start, end);
+
+            if (pageItems.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:#666; margin-top:20px;">No se encontraron videos coincidentes.</p>';
+                document.getElementById('pageInfo').innerText = "Página 0 de 0";
+                document.getElementById('prevPageBtn').disabled = true;
+                document.getElementById('nextPageBtn').disabled = true;
+                return;
+            }
+
+            pageItems.forEach(video => {
                 const item = document.createElement('div');
                 item.className = 'video-item';
-                
-                // Formatear la fecha
                 const date = video.published_at ? new Date(video.published_at).toLocaleDateString('es-ES') : '';
+                const safeTitle = video.title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
                 item.innerHTML = `
-                    <img src="${video.thumbnail_url}" alt="Miniatura" onclick="loadVideo('${video.video_id}', '${video.title.replace(/'/g, "\\'")}', '${date}')">
-                    <div class="video-item-details">
-                        <p class="video-item-title" onclick="loadVideo('${video.video_id}', '${video.title.replace(/'/g, "\\'")}', '${date}')">${video.title}</p>
-                        <button class="add-to-playlist" onclick="addToPlaylist('${video.video_id}', '${video.title.replace(/'/g, "\\'")}', '${video.thumbnail_url}')">+ Mi Lista</button>
+                    <img src="${video.thumbnail_url}" alt="Miniatura" onclick="selectAndPlay('${video.video_id}', '${safeTitle}', '${date}')">
+                    <div class="video-item-details" onclick="selectAndPlay('${video.video_id}', '${safeTitle}', '${date}')">
+                        <p class="video-item-title">${video.title}</p>
+                        <div class="video-item-footer">
+                            <span class="video-date">${date}</span>
+                            <button class="add-to-playlist" onclick="event.stopPropagation(); addToPlaylist('${video.video_id}', '${safeTitle}', '${video.thumbnail_url}')">+ Mi Lista</button>
+                        </div>
                     </div>
                 `;
                 container.appendChild(item);
             });
+
+            // Actualizar controles de paginación
+            document.getElementById('pageInfo').innerText = `Página ${currentPage} de ${totalPages}`;
+            document.getElementById('prevPageBtn').disabled = currentPage === 1;
+            document.getElementById('nextPageBtn').disabled = currentPage === totalPages || totalPages === 0;
         }
 
-        // 5. Filtros y Búsqueda
-        function filterByLetter(letter) {
-            currentFilter = letter;
-            document.querySelectorAll('.letter-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            filterVideos();
+        function changePage(direction) {
+            currentPage += direction;
+            renderCurrentPage();
         }
 
-        function filterVideos() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = allVideos.filter(video => {
-                const matchesSearch = video.title.toLowerCase().includes(searchTerm);
-                const matchesLetter = currentFilter === 'ALL' || video.title.toUpperCase().startsWith(currentFilter);
-                return matchesSearch && matchesLetter;
-            });
-            renderVideoList(filtered);
-        }
-
-        // 6. Controles del Reproductor
-        function loadVideo(videoId, title, dateStr) {
+        // Seleccionar video, saltar al visor y reproducir automáticamente
+        function selectAndPlay(videoId, title, dateStr) {
             activeVideoId = videoId;
             document.getElementById('active-title').innerText = title;
-            document.getElementById('active-date').innerText = "Publicado: " + dateStr;
+            document.getElementById('active-date').innerText = dateStr ? "Publicado: " + dateStr : "";
             
             if (ytPlayer && ytPlayer.loadVideoById) {
                 ytPlayer.loadVideoById(videoId);
             }
+
+            // Desplazamiento fluido hacia el reproductor
+            document.getElementById('player-anchor').scrollIntoView({ behavior: 'smooth' });
         }
 
         function playCurrent() {
@@ -397,14 +477,12 @@
 
         function playNext() {
             if (playlist.length === 0) return;
-            // Buscar el índice actual en la playlist
             const currentIndex = playlist.findIndex(v => v.id === activeVideoId);
             if (currentIndex >= 0 && currentIndex < playlist.length - 1) {
                 const nextVideo = playlist[currentIndex + 1];
-                loadVideo(nextVideo.id, nextVideo.title, '');
+                selectAndPlay(nextVideo.id, nextVideo.title, '');
             } else if (playlist.length > 0) {
-                // Si no estaba en la playlist o era el último, reproducir el primero de la lista
-                loadVideo(playlist[0].id, playlist[0].title, '');
+                selectAndPlay(playlist[0].id, playlist[0].title, '');
             }
         }
 
@@ -413,7 +491,7 @@
             const currentIndex = playlist.findIndex(v => v.id === activeVideoId);
             if (currentIndex > 0) {
                 const prevVideo = playlist[currentIndex - 1];
-                loadVideo(prevVideo.id, prevVideo.title, '');
+                selectAndPlay(prevVideo.id, prevVideo.title, '');
             }
         }
 
@@ -426,12 +504,13 @@
             }
         }
 
-        // 7. Gestión de Mi Lista de Reproducción
         function addToPlaylist(id, title, thumbnail) {
             if (!playlist.find(v => v.id === id)) {
                 playlist.push({ id, title, thumbnail });
                 updatePlaylistView();
-                alert("Agregado a Mi Lista de Reproducción");
+                alert("¡Video agregado a Mi Lista de Reproducción!");
+            } else {
+                alert("Este video ya se encuentra en tu lista.");
             }
         }
 
@@ -451,41 +530,42 @@
             container.innerHTML = '';
             
             if (playlist.length === 0) {
-                container.innerHTML = '<p style="text-align:center; padding: 20px; color:#666;">Tu lista está vacía. Añade videos desde el Buscador.</p>';
+                container.innerHTML = '<p style="text-align:center; padding: 30px; color:#666;">Tu lista está vacía. Añade videos usando el botón "+ Mi Lista" en el catálogo.</p>';
                 return;
             }
 
             playlist.forEach(video => {
                 const item = document.createElement('div');
                 item.className = 'video-item';
+                const safeTitle = video.title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
                 item.innerHTML = `
-                    <img src="${video.thumbnail}" alt="Miniatura" onclick="loadVideo('${video.id}', '${video.title.replace(/'/g, "\\'")}', '')">
-                    <div class="video-item-details">
-                        <p class="video-item-title" onclick="loadVideo('${video.id}', '${video.title.replace(/'/g, "\\'")}', '')">${video.title}</p>
-                        <button class="add-to-playlist" style="color:red; border-color:red;" onclick="removeFromPlaylist('${video.id}')">Eliminar</button>
+                    <img src="${video.thumbnail}" alt="Miniatura" onclick="selectAndPlay('${video.id}', '${safeTitle}', '')">
+                    <div class="video-item-details" onclick="selectAndPlay('${video.id}', '${safeTitle}', '')">
+                        <p class="video-item-title">${video.title}</p>
+                        <div class="video-item-footer">
+                            <span></span>
+                            <button class="add-to-playlist" style="color:red; border-color:red;" onclick="event.stopPropagation(); removeFromPlaylist('${video.id}')">Eliminar</button>
+                        </div>
                     </div>
                 `;
                 container.appendChild(item);
             });
         }
 
-        // 8. Navegación entre pestañas
         function switchTab(tabName) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.getElementById('tab-' + tabName).classList.add('active');
             
             if (tabName === 'catalogo') {
-                document.getElementById('catalogo-view').style.display = 'block';
+                document.getElementById('catalogo-view').style.display = 'flex';
                 document.getElementById('playlist-view').style.display = 'none';
             } else {
                 document.getElementById('catalogo-view').style.display = 'none';
-                document.getElementById('playlist-view').style.display = 'block';
+                document.getElementById('playlist-view').style.display = 'flex';
             }
         }
 
-        // Inicializar
         window.onload = () => {
-            generateAlphabet();
             loadCSVData();
         };
     </script>
