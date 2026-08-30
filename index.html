@@ -127,11 +127,19 @@
             width: 100%;
             height: 100%;
         }
+        .controls-note {
+            font-size: 0.82rem;
+            color: #555;
+            text-align: center;
+            margin-top: 18px;
+            font-style: italic;
+            font-weight: 600;
+        }
         .player-controls {
             display: flex;
             justify-content: center;
             gap: 12px;
-            margin-top: 20px;
+            margin-top: 8px;
             flex-wrap: wrap;
         }
         .btn-control {
@@ -284,7 +292,7 @@
 
     <section class="intro-section">
         <div class="author-card">
-            <img src="foto_autor.jpg" alt="Prof. Ing. Miguel Camacaro Pérez">
+            <img src="foto_autor.png" alt="Prof. Ing. Miguel Camacaro Pérez">
             <div class="author-info">
                 <strong>Prof. Ing. Miguel Camacaro Pérez</strong>
                 <p>Ingeniero Civil por la Universidad de Los Andes (Venezuela), especialización en Valuación Inmobiliaria, Máster en Ciencias en Gerencia de la Construcción, Profesor universitario. Referencia internacional en la integración de Ciencia de la Valuación, Ciencia de Datos e Inteligencia Artificial Generativa.</p>
@@ -302,11 +310,11 @@
                 <div id="youtube-player"></div>
             </div>
             
+            <p class="controls-note">Nota: Los botones solo funcionan para el modo lista de reproducción.</p>
             <div class="player-controls">
-                <button class="btn-control" onclick="playPrevious()">⏮ Atrás</button>
-                <button class="btn-control" onclick="playCurrent()">▶ Reproducir</button>
-                <button class="btn-control" onclick="playNext()">⏭ Adelante</button>
-                <button class="btn-control" onclick="resetPlayer()">🔄 Resetear</button>
+                <button class="btn-control" onclick="playPrevious()">⏮ Anterior</button>
+                <button class="btn-control" onclick="playPlaylistAuto()">▶ Reproducir</button>
+                <button class="btn-control" onclick="playNext()">⏭ Siguiente</button>
             </div>
 
             <div class="active-video-info">
@@ -374,7 +382,6 @@
             }
         }
 
-        // Limpiar tildes y normalizar texto para búsqueda robusta sin restricciones
         function normalizeText(text) {
             return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         }
@@ -403,7 +410,7 @@
                 return titleNorm.includes(searchTerm);
             });
 
-            currentPage = 1; // Reiniciar a la primera página al buscar
+            currentPage = 1;
             renderCurrentPage();
         }
 
@@ -446,7 +453,6 @@
                 container.appendChild(item);
             });
 
-            // Actualizar controles de paginación
             document.getElementById('pageInfo').innerText = `Página ${currentPage} de ${totalPages}`;
             document.getElementById('prevPageBtn').disabled = currentPage === 1;
             document.getElementById('nextPageBtn').disabled = currentPage === totalPages || totalPages === 0;
@@ -457,7 +463,6 @@
             renderCurrentPage();
         }
 
-        // Seleccionar video, saltar al visor y reproducir automáticamente
         function selectAndPlay(videoId, title, dateStr) {
             activeVideoId = videoId;
             document.getElementById('active-title').innerText = title;
@@ -467,12 +472,17 @@
                 ytPlayer.loadVideoById(videoId);
             }
 
-            // Desplazamiento fluido hacia el reproductor
             document.getElementById('player-anchor').scrollIntoView({ behavior: 'smooth' });
         }
 
-        function playCurrent() {
-            if (ytPlayer && ytPlayer.playVideo) ytPlayer.playVideo();
+        // Reproducir automáticamente toda la lista desde el principio o el elemento actual
+        function playPlaylistAuto() {
+            if (playlist.length === 0) {
+                alert("Tu lista de reproducción está vacía. Añade videos primero.");
+                return;
+            }
+            const firstVideo = playlist[0];
+            selectAndPlay(firstVideo.id, firstVideo.title, '');
         }
 
         function playNext() {
@@ -495,22 +505,10 @@
             }
         }
 
-        function resetPlayer() {
-            if (ytPlayer && ytPlayer.stopVideo) {
-                ytPlayer.stopVideo();
-                document.getElementById('active-title').innerText = "Selecciona un video de la lista para comenzar";
-                document.getElementById('active-date').innerText = "";
-                activeVideoId = null;
-            }
-        }
-
         function addToPlaylist(id, title, thumbnail) {
             if (!playlist.find(v => v.id === id)) {
                 playlist.push({ id, title, thumbnail });
                 updatePlaylistView();
-                alert("¡Video agregado a Mi Lista de Reproducción!");
-            } else {
-                alert("Este video ya se encuentra en tu lista.");
             }
         }
 
