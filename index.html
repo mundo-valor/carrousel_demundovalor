@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>El Carrusel del Valor | Mundo Valor</title>
-    <!-- PapaParse para leer el CSV -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
         :root {
@@ -19,12 +18,17 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: var(--bg-light);
             color: var(--text-dark);
             scroll-behavior: smooth;
+            
+            /* IMAGEN DE FONDO GLOBAL: Desde el autor hasta el final de la página */
+            background-image: linear-gradient(rgba(244, 246, 249, 0.93), rgba(244, 246, 249, 0.93)), url('fondo_clase.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
         }
 
-        /* Header rediseñado según la referencia visual */
+        /* Header institucional */
         header {
             background-color: var(--primary-blue);
             color: var(--white);
@@ -81,14 +85,10 @@
         }
         .btn-paypal:hover { background-color: #003087; }
 
-        /* Sección del autor con fondo de clase atenuado */
+        /* Sección del autor */
         .intro-section {
-            position: relative;
-            background-image: linear-gradient(rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.92)), url('fondo_clase.png');
-            background-size: cover;
-            background-position: center;
+            background: transparent;
             padding: 35px 40px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             text-align: center;
         }
         .author-card {
@@ -100,6 +100,10 @@
             margin: 0 auto;
             text-align: left;
             flex-wrap: wrap;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
         .intro-section img.author-photo {
             width: 150px;
@@ -118,7 +122,7 @@
         
         .instruction-banner {
             margin-top: 25px;
-            background-color: #eef2f7;
+            background-color: rgba(238, 242, 247, 0.95);
             border-left: 5px solid var(--accent-orange);
             padding: 12px 20px;
             border-radius: 4px;
@@ -135,7 +139,7 @@
         .main-container {
             display: flex;
             flex-wrap: wrap;
-            padding: 30px 40px;
+            padding: 10px 40px 40px 40px;
             gap: 30px;
             max-width: 1400px;
             margin: 0 auto;
@@ -144,10 +148,10 @@
         /* Columna Izquierda: Reproductor */
         .player-column {
             flex: 1 1 58%;
-            background: var(--white);
+            background: rgba(255, 255, 255, 0.92);
             padding: 25px;
             border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
             display: flex;
             flex-direction: column;
         }
@@ -200,10 +204,10 @@
         /* Columna Derecha: Buscador y Playlist */
         .search-column {
             flex: 1 1 38%;
-            background: var(--white);
+            background: rgba(255, 255, 255, 0.92);
             padding: 25px;
             border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
             display: flex;
             flex-direction: column;
             min-height: 600px;
@@ -217,6 +221,7 @@
             box-sizing: border-box;
             font-size: 1rem;
             outline: none;
+            background: #fff;
             transition: border-color 0.3s;
         }
         .search-bar:focus { border-color: var(--primary-blue); }
@@ -252,7 +257,7 @@
             display: flex;
             gap: 12px;
             padding: 10px;
-            background: #fafbfc;
+            background: rgba(250, 251, 252, 0.95);
             border: 1px solid #e1e4e8;
             border-radius: 6px;
             cursor: pointer;
@@ -337,7 +342,7 @@
 
     <section class="intro-section">
         <div class="author-card">
-            <img src="foto_autor.png" alt="Prof. Ing. Miguel Camacaro Pérez" class="author-photo">
+            <img src="foto_autor.jpg" alt="Prof. Ing. Miguel Camacaro Pérez" class="author-photo">
             <div class="author-info">
                 <strong>Prof. Ing. Miguel Camacaro Pérez</strong>
                 <p>Ingeniero Civil por la Universidad de Los Andes (Venezuela), especialización en Valuación Inmobiliaria, Máster en Ciencias en Gerencia de la Construcción, Profesor universitario. Referencia internacional en la integración de Ciencia de la Valuación, Ciencia de Datos e Inteligencia Artificial Generativa.</p>
@@ -349,7 +354,6 @@
     </section>
 
     <div class="main-container" id="player-anchor">
-        <!-- REPRODUCTOR Y CONTROLES -->
         <div class="player-column">
             <div class="video-wrapper">
                 <div id="youtube-player"></div>
@@ -368,7 +372,6 @@
             </div>
         </div>
 
-        <!-- BUSCADOR Y LISTA CON PAGINACIÓN -->
         <div class="search-column">
             <div class="tabs">
                 <div class="tab active" id="tab-catalogo" onclick="switchTab('catalogo')">Catálogo de Videos</div>
@@ -379,8 +382,7 @@
                 <input type="text" id="searchInput" class="search-bar" placeholder="🔍 Buscar por título, palabra o número..." onkeyup="handleSearch()">
                 
                 <div class="video-list-container" id="video-list">
-                    <!-- Los videos se cargan aquí -->
-                </div>
+                    </div>
 
                 <div class="pagination" id="pagination-controls">
                     <button class="page-btn" id="prevPageBtn" onclick="changePage(-1)">Anterior</button>
@@ -392,13 +394,11 @@
             <div id="playlist-view" style="display: none; flex-direction: column; flex-grow: 1;">
                 <button class="btn-control" style="width: 100%; margin-bottom: 15px; background-color: #dc3545;" onclick="clearPlaylist()">Vaciar Lista de Reproducción</button>
                 <div class="video-list-container" id="playlist-list" style="overflow-y: auto; max-height: 450px;">
-                    <!-- Lista personalizada -->
-                </div>
+                    </div>
             </div>
         </div>
     </div>
 
-    <!-- API de YouTube -->
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
         let allVideos = [];
