@@ -24,32 +24,45 @@
             scroll-behavior: smooth;
         }
 
-        /* Header e Intro optimizados */
+        /* Header optimizado */
         header {
             background-color: var(--primary-blue);
             color: var(--white);
-            padding: 30px 40px;
+            padding: 25px 40px;
             text-align: center;
             border-bottom: 5px solid var(--accent-orange);
         }
         .logo-container {
             display: inline-block;
             background: rgba(255, 255, 255, 0.95);
-            padding: 10px 20px;
+            padding: 8px 18px;
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         header img {
-            height: 110px; 
+            height: 95px; 
             display: block;
         }
-        header h1 { margin: 10px 0 0 0; font-size: 2.8rem; }
-        header p { margin: 5px 0 0; font-style: italic; opacity: 0.95; font-size: 1.1rem; }
+        header h1 { margin: 8px 0 0 0; font-size: 2.5rem; }
+        header .subtitle-top { font-size: 1rem; font-style: italic; opacity: 0.95; margin-top: 4px; }
+        
+        /* Título inferior más pequeño */
+        header .subtitle-bottom { 
+            margin: 10px 0 0 0; 
+            font-size: 1.15rem; 
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            opacity: 0.9; 
+        }
 
+        /* Sección del autor con fondo de clase atenuado */
         .intro-section {
-            background-color: var(--white);
-            padding: 30px 40px;
+            position: relative;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.92)), url('fondo_clase.jpg');
+            background-size: cover;
+            background-position: center;
+            padding: 35px 40px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             text-align: center;
         }
@@ -63,7 +76,7 @@
             text-align: left;
             flex-wrap: wrap;
         }
-        .intro-section img {
+        .intro-section img.author-photo {
             width: 150px;
             height: 150px;
             border-radius: 50%;
@@ -78,8 +91,31 @@
         .author-info strong { font-size: 1.2rem; color: var(--primary-blue); }
         .author-info p { line-height: 1.6; font-size: 1rem; margin: 8px 0; }
         
+        .author-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .btn-paypal {
+            background-color: #0070ba;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+            transition: background 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-paypal:hover { background-color: #003087; }
+
         .instruction-banner {
-            margin-top: 20px;
+            margin-top: 25px;
             background-color: #eef2f7;
             border-left: 5px solid var(--accent-orange);
             padding: 12px 20px;
@@ -90,6 +126,7 @@
             max-width: 1000px;
             margin-left: auto;
             margin-right: auto;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
         }
 
         /* Contenedor Principal */
@@ -152,7 +189,9 @@
             font-weight: bold;
             transition: background 0.3s;
         }
-        .btn-control:hover { background-color: var(--accent-orange); }
+        .btn-control:hover:not(:disabled) { background-color: var(--accent-orange); }
+        .btn-control:disabled { background-color: #cbd5e1; cursor: not-allowed; opacity: 0.7; }
+        
         .active-video-info { margin-top: 20px; }
         .active-video-info h2 { margin: 0 0 8px 0; color: var(--primary-blue); font-size: 1.3rem; }
 
@@ -287,15 +326,20 @@
             <img src="logo.png" alt="Logo Mundo Valor">
         </div>
         <h1>Mundo Valor</h1>
-        <p>El Carrusel del Valor | El canal de la valuación</p>
+        <div class="subtitle-top">El canal de la valuación</div>
+        <p class="subtitle-bottom">El Carrusel del Valor</p>
     </header>
 
     <section class="intro-section">
         <div class="author-card">
-            <img src="foto_autor.png" alt="Prof. Ing. Miguel Camacaro Pérez">
+            <img src="foto_autor.jpg" alt="Prof. Ing. Miguel Camacaro Pérez" class="author-photo">
             <div class="author-info">
                 <strong>Prof. Ing. Miguel Camacaro Pérez</strong>
                 <p>Ingeniero Civil por la Universidad de Los Andes (Venezuela), especialización en Valuación Inmobiliaria, Máster en Ciencias en Gerencia de la Construcción, Profesor universitario. Referencia internacional en la integración de Ciencia de la Valuación, Ciencia de Datos e Inteligencia Artificial Generativa.</p>
+                
+                <div class="author-actions">
+                    <a href="https://paypal.me/spilimcurso" target="_blank" class="btn-paypal">☕ Aportar / Donar (PayPal)</a>
+                </div>
             </div>
         </div>
         <div class="instruction-banner">
@@ -312,9 +356,9 @@
             
             <p class="controls-note">Nota: Los botones solo funcionan para el modo lista de reproducción.</p>
             <div class="player-controls">
-                <button class="btn-control" onclick="playPrevious()">⏮ Anterior</button>
+                <button class="btn-control" id="btnPrev" onclick="playPrevious()" disabled>⏮ Anterior</button>
                 <button class="btn-control" onclick="playPlaylistAuto()">▶ Reproducir</button>
-                <button class="btn-control" onclick="playNext()">⏭ Siguiente</button>
+                <button class="btn-control" id="btnNext" onclick="playNext()" disabled>⏭ Siguiente</button>
             </div>
 
             <div class="active-video-info">
@@ -472,10 +516,23 @@
                 ytPlayer.loadVideoById(videoId);
             }
 
+            updateNavButtonsState();
             document.getElementById('player-anchor').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Reproducir automáticamente toda la lista desde el principio o el elemento actual
+        function updateNavButtonsState() {
+            if (playlist.length === 0) {
+                document.getElementById('btnPrev').disabled = true;
+                document.getElementById('btnNext').disabled = true;
+                return;
+            }
+            const currentIndex = playlist.findIndex(v => v.id === activeVideoId);
+            // Si no está en la playlist o es el primero
+            document.getElementById('btnPrev').disabled = (currentIndex <= 0);
+            // Si no está en la playlist o es el último
+            document.getElementById('btnNext').disabled = (currentIndex === -1 || currentIndex >= playlist.length - 1);
+        }
+
         function playPlaylistAuto() {
             if (playlist.length === 0) {
                 alert("Tu lista de reproducción está vacía. Añade videos primero.");
@@ -491,8 +548,6 @@
             if (currentIndex >= 0 && currentIndex < playlist.length - 1) {
                 const nextVideo = playlist[currentIndex + 1];
                 selectAndPlay(nextVideo.id, nextVideo.title, '');
-            } else if (playlist.length > 0) {
-                selectAndPlay(playlist[0].id, playlist[0].title, '');
             }
         }
 
@@ -509,17 +564,20 @@
             if (!playlist.find(v => v.id === id)) {
                 playlist.push({ id, title, thumbnail });
                 updatePlaylistView();
+                updateNavButtonsState();
             }
         }
 
         function removeFromPlaylist(id) {
             playlist = playlist.filter(v => v.id !== id);
             updatePlaylistView();
+            updateNavButtonsState();
         }
 
         function clearPlaylist() {
             playlist = [];
             updatePlaylistView();
+            updateNavButtonsState();
         }
 
         function updatePlaylistView() {
