@@ -217,7 +217,7 @@
             padding: 14px;
             border: 2px solid #d1d8e0;
             border-radius: 6px;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
             box-sizing: border-box;
             font-size: 1rem;
             outline: none;
@@ -225,6 +225,28 @@
             transition: border-color 0.3s;
         }
         .search-bar:focus { border-color: var(--primary-blue); }
+
+        .sort-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        .sort-row label { font-size: 0.85rem; font-weight: 600; color: #555; }
+        .sort-select {
+            padding: 8px 10px;
+            border: 2px solid #d1d8e0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: #fff;
+            color: var(--text-dark);
+            cursor: pointer;
+            outline: none;
+        }
+        .sort-select:focus { border-color: var(--primary-blue); }
+        .video-count { font-size: 0.82rem; color: #666; font-weight: 600; }
         
         .tabs {
             display: flex;
@@ -380,6 +402,19 @@
 
             <div id="catalogo-view" style="display: flex; flex-direction: column; flex-grow: 1;">
                 <input type="text" id="searchInput" class="search-bar" placeholder="🔍 Buscar por título, palabra o número..." onkeyup="handleSearch()">
+
+                <div class="sort-row">
+                    <div>
+                        <label for="sortSelect">Ordenar por:</label>
+                        <select id="sortSelect" class="sort-select" onchange="changeSort()">
+                            <option value="date-desc">Fecha: más recientes primero</option>
+                            <option value="date-asc">Fecha: más antiguos primero</option>
+                            <option value="title-asc" selected>Título: A → Z</option>
+                            <option value="title-desc">Título: Z → A</option>
+                        </select>
+                    </div>
+                    <span class="video-count" id="videoCount"></span>
+                </div>
                 
                 <div class="video-list-container" id="video-list">
                     </div>
@@ -431,13 +466,39 @@
             return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         }
 
+        function sortVideos(list) {
+            const mode = document.getElementById('sortSelect').value;
+            const byTitle = (a, b) => (a.title || "").localeCompare(b.title || "", 'es', { numeric: true, sensitivity: 'base' });
+            const byDate = (a, b) => (Date.parse(a.published_at) || 0) - (Date.parse(b.published_at) || 0);
+
+            const sorted = list.slice();
+            if (mode === 'title-asc') sorted.sort(byTitle);
+            else if (mode === 'title-desc') sorted.sort((a, b) => byTitle(b, a));
+            else if (mode === 'date-asc') sorted.sort(byDate);
+            else sorted.sort((a, b) => byDate(b, a));
+            return sorted;
+        }
+
+        function changeSort() {
+            filteredVideos = sortVideos(filteredVideos);
+            currentPage = 1;
+            renderCurrentPage();
+        }
+
+        function updateVideoCount() {
+            const el = document.getElementById('videoCount');
+            el.innerText = filteredVideos.length === allVideos.length
+                ? `${allVideos.length} videos`
+                : `${filteredVideos.length} de ${allVideos.length} videos`;
+        }
+
         function loadCSVData() {
             Papa.parse("mundo_valor_videos.csv", {
                 download: true,
                 header: true,
                 complete: function(results) {
                     allVideos = results.data.filter(v => v.video_id);
-                    filteredVideos = allVideos;
+                    filteredVideos = sortVideos(allVideos);
                     renderCurrentPage();
                 },
                 error: function(err) {
@@ -450,10 +511,10 @@
             const rawTerm = document.getElementById('searchInput').value;
             const searchTerm = normalizeText(rawTerm);
             
-            filteredVideos = allVideos.filter(video => {
+            filteredVideos = sortVideos(allVideos.filter(video => {
                 const titleNorm = normalizeText(video.title || "");
                 return titleNorm.includes(searchTerm);
-            });
+            }));
 
             currentPage = 1;
             renderCurrentPage();
@@ -462,6 +523,7 @@
         function renderCurrentPage() {
             const container = document.getElementById('video-list');
             container.innerHTML = '';
+            updateVideoCount();
 
             const totalPages = Math.ceil(filteredVideos.length / itemsPerPage) || 1;
             if (currentPage > totalPages) currentPage = totalPages;
